@@ -26,9 +26,7 @@ const addRowToCompleteList = (text) => {
   div.appendChild(li);
   div.appendChild(
     createButton("戻す", (button) => {
-      addRowToIncompleteList(
-        button.parentNode.getElementsByTagName("li")[0].innerText
-      );
+      addRowToIncompleteList(button.parentNode.firstElementChild.innerText);
       deleteRowFromCompleteList(button);
     })
   );
@@ -51,9 +49,7 @@ const addRowToIncompleteList = (text) => {
   // 完了ボタン
   div.appendChild(
     createButton("完了", (button) => {
-      addRowToCompleteList(
-        button.parentNode.getElementsByTagName("li")[0].innerText
-      );
+      addRowToCompleteList(button.parentNode.firstElementChild.innerText);
       deleteRowFromIncompleteList(button);
     })
   );
