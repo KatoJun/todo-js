@@ -1,61 +1,85 @@
 import "./styles.css";
 
-const onClickAdd = () => {
-  // テキストボックスの値を取得し、初期化する
-  const inputText = document.getElementById("add-text").value;
-  document.getElementById("add-text").value = "";
+const deleteRow = (button, listId) => {
+  document.getElementById(listId).removeChild(button.parentNode);
+};
 
+// 未完了リストから削除
+const deleteRowFromIncompleteList = (button) => {
+  deleteRow(button, "incomplete-list");
+};
+
+// 完了リストから削除
+const deleteRowFromCompleteList = (button) => {
+  deleteRow(button, "complete-list");
+};
+
+// 完了リストに追加
+const addRowToCompleteList = (text) => {
+  // div生成
+  const div = document.createElement("div");
+  div.className = "list-row";
+  // li生成
+  const li = document.createElement("li");
+  li.innerText = text;
+
+  div.appendChild(li);
+  div.appendChild(
+    createButton("戻す", (button) => {
+      addRowToIncompleteList(
+        button.parentNode.getElementsByTagName("li")[0].innerText
+      );
+      deleteRowFromCompleteList(button);
+    })
+  );
+  document.getElementById("complete-list").appendChild(div);
+};
+
+// 未完了リストに追加
+const addRowToIncompleteList = (text) => {
   // div生成
   const div = document.createElement("div");
   div.className = "list-row";
 
   // li生成
   const li = document.createElement("li");
-  li.innerText = inputText;
-
-  // button（完了）生成
-  const completeButton = document.createElement("button");
-  completeButton.innerText = "完了";
-  completeButton.addEventListener("click", () => {
-    // 完了リストに追加
-
-    // div生成
-    const div = document.createElement("div");
-    div.className = "list-row";
-    // li生成
-    const li = document.createElement("li");
-    li.innerText = completeButton.parentNode.getElementsByTagName(
-      "li"
-    )[0].innerText;
-
-    // button（戻す）生成
-    const backButton = document.createElement("button");
-    backButton.innerText = "戻す";
-    backButton.addEventListener("click", () => {});
-
-    div.appendChild(li);
-    div.appendChild(backButton);
-    document.getElementById("complete-list").appendChild(div);
-
-    // 未完了リストから削除
-  });
-
-  // button（削除）生成
-  const deleteButton = document.createElement("button");
-  deleteButton.innerText = "削除";
-  deleteButton.addEventListener("click", () => {
-    // 押された削除ボタンの親タグ(div)を未完了リストを削除
-    const deleteTarget = deleteButton.parentNode;
-    document.getElementById("incomplete-list").removeChild(deleteTarget);
-  });
+  li.innerText = text;
 
   // divの子要素に各要素を設定
   div.appendChild(li);
-  div.appendChild(completeButton);
-  div.appendChild(deleteButton);
 
-  // 未完了のリストに追加
+  // 完了ボタン
+  div.appendChild(
+    createButton("完了", (button) => {
+      addRowToCompleteList(
+        button.parentNode.getElementsByTagName("li")[0].innerText
+      );
+      deleteRowFromIncompleteList(button);
+    })
+  );
+  // 削除ボタン
+  div.appendChild(
+    createButton("削除", (button) => {
+      deleteRowFromIncompleteList(button);
+    })
+  );
   document.getElementById("incomplete-list").appendChild(div);
+};
+
+const createButton = (title, onClick) => {
+  const button = document.createElement("button");
+  button.innerText = title;
+  button.addEventListener("click", () => {
+    onClick(button);
+  });
+  return button;
+};
+
+const onClickAdd = () => {
+  // テキストボックスの値を取得し、初期化する
+  const inputText = document.getElementById("add-text").value;
+  document.getElementById("add-text").value = "";
+  addRowToIncompleteList(inputText);
 };
 
 document
